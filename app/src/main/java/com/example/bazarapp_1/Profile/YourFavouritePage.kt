@@ -278,6 +278,7 @@ fun FavouriteBody(modifier: Modifier = Modifier) {
                 contentDescription = "Favourite",
                 modifier = Modifier
                     .weight(.2f)
+
                     .padding(top = 6.dp)
             )
         }
