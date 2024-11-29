@@ -81,7 +81,12 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
     val coroutineScope = rememberCoroutineScope()
     var isSheetOpen by remember { mutableStateOf(false) }
 
-
+    val authState by authViewModel.authState.observeAsState()
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Unauthenticated) {
+            navController.navigate(SignupPage)
+        }
+    }
     Column(modifier = Modifier.padding(top = 25.dp)) {
         // Header Text
         Text(
@@ -202,12 +207,7 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                     ) {
                         // logout
 
-                        val authState by authViewModel.authState.observeAsState()
-                        LaunchedEffect(authState) {
-                            if (authState is AuthState.Unauthenticated) {
-                                navController.navigate(SignupPage)
-                            }
-                        }
+
                         // Logout Button
                         Button(
                             colors = ButtonDefaults.buttonColors(

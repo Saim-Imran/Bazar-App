@@ -57,7 +57,7 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    fun signup(email: String, password: String) {
+    /*fun signup(email: String, password: String) {
         if (email.isEmpty() || password.isEmpty()) {
             _authState.value = AuthState.Error("Email and password can't be empty")
             return
@@ -72,12 +72,32 @@ class AuthViewModel : ViewModel() {
                         AuthState.Error(task.exception?.message ?: "Something went wrong")
                 }
             }
+    }*/
+// for otp email
+    fun signup(email: String, password: String) {
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = FirebaseAuth.getInstance().currentUser
+                    user?.sendEmailVerification()?.addOnCompleteListener { verifyTask ->
+                        if (verifyTask.isSuccessful) {
+                            _authState.value = AuthState.Authenticated
+                        } else {
+                            _authState.value = AuthState.Error(verifyTask.exception?.message ?: "Verification email failed")
+                        }
+                    }
+                } else {
+                    _authState.value = AuthState.Error(task.exception?.message ?: "Sign-up failed")
+                }
+            }
     }
 
     // Sign out
     fun signout() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated
+
+
     }
 
 

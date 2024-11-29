@@ -41,6 +41,7 @@ import com.example.bazarapp_1.onBoarding.SplashScreen
 import com.example.bazarapp_1.signup.SignInScreen
 import com.example.bazarapp_1.signup.SignUPScreen1
 import com.example.bazarapp_1.signup.SignUpSuccessScreen
+import com.example.bazarapp_1.signup.SignUpVerificationEmailScreen
 import kotlinx.serialization.Serializable
 @Composable
 fun Navigation(
@@ -263,6 +264,13 @@ fun Navigation(
                 navController = navController
             )
         }
+
+        composable<SignUpVerificationEmailPage> {
+            SignUpVerificationEmailScreen(
+                authViewModel = authViewModel,
+                navController = navController
+            )
+        }
     }
 }
 
@@ -287,6 +295,9 @@ object LoginPage
 
 @Serializable
 object SignupPage
+
+@Serializable
+object SignUpVerificationEmailPage
 
 @Serializable
 object MenuPage1

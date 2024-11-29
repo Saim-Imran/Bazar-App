@@ -259,7 +259,7 @@ fun LogInFields(
             color = Color(0xff54408C),
             fontSize = 20.sp,
             modifier = Modifier.clickable {
-                navController.navigate(HomePage)
+               // navController.navigate(HomePage)
             }
         )
     }

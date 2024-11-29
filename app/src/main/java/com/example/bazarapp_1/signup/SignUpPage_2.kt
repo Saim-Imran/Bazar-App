@@ -59,6 +59,7 @@ import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
 import com.example.bazarapp_1.LoginPage
 import com.example.bazarapp_1.R
+import com.example.bazarapp_1.SignUpVerificationEmailPage
 import com.example.bazarapp_1.common.Annotated
 import com.example.bazarapp_1.common.HeaderTextSignPages1
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
@@ -367,7 +368,7 @@ fun RegisterButtonPage2(navController: NavHostController, authViewModel: AuthVie
                 modifier = Modifier
                     //          .padding(top = 25.dp)
                     .clickable {
-navController.navigate(LoginPage)
+navController.navigate(SignUpVerificationEmailPage)
                     }
             )
         }
