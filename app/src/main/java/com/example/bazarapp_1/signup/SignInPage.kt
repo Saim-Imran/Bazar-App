@@ -49,6 +49,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
+import com.example.bazarapp_1.HomePage
 import com.example.bazarapp_1.MenuPage1
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.SignUpSuccessPage
@@ -57,7 +58,10 @@ import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
 
 @Composable
-fun SignInScreen(navController: NavHostController, authViewModel: AuthViewModel) {
+fun SignInScreen(
+    navController: NavHostController,
+    authViewModel: AuthViewModel,
+    onGoogleSignInClick: () -> Unit,) {
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -70,6 +74,7 @@ fun SignInScreen(navController: NavHostController, authViewModel: AuthViewModel)
                 contentDescription = "Zoom",
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp)
+                    .clickable { navController.popBackStack() }
             )
 
             //text welcome
@@ -82,7 +87,7 @@ fun SignInScreen(navController: NavHostController, authViewModel: AuthViewModel)
             // for Email and login
             LogInFields(
                 modifier = Modifier,
-                navController = rememberNavController(),
+                navController = navController,
                 authViewModel = authViewModel,
             )
             //Login Button
@@ -96,7 +101,10 @@ fun SignInScreen(navController: NavHostController, authViewModel: AuthViewModel)
                 navController = navController
             )
             // For android login
-            LoginWithGoogle()
+            LoginWithGoogle(
+                modifier = Modifier,
+                onGoogleSignInClick = onGoogleSignInClick
+            )
             // for ios login
             LoginWithIOS()
         }
@@ -128,7 +136,7 @@ fun LogInFields(
         when (authState) {
             is AuthState.Authenticated -> {
                 Log.i("TAG", "TAG LogInFields: ")
-                navController.navigate(MenuPage1)
+                navController.navigate(HomePage)
             }
 
             is AuthState.Error -> {
@@ -251,7 +259,7 @@ fun LogInFields(
             color = Color(0xff54408C),
             fontSize = 20.sp,
             modifier = Modifier.clickable {
-                navController.navigate(MenuPage1)
+                navController.navigate(HomePage)
             }
         )
     }
@@ -319,7 +327,7 @@ fun LoginButtonPage1(authViewModel: AuthViewModel, navController: NavController)
 }
 
 @Composable
-fun OtherLoginWays(modifier: Modifier = Modifier,navController: NavHostController) {
+fun OtherLoginWays(modifier: Modifier = Modifier,navController: NavHostController,) {
     Row(
         modifier = Modifier
             .padding(top = 20.dp)
@@ -354,7 +362,7 @@ fun OtherLoginWays(modifier: Modifier = Modifier,navController: NavHostControlle
 }
 
 @Composable
-fun LoginWithGoogle(modifier: Modifier = Modifier) {
+fun LoginWithGoogle(modifier: Modifier = Modifier,onGoogleSignInClick: () -> Unit,) {
     OutlinedButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
@@ -363,7 +371,7 @@ fun LoginWithGoogle(modifier: Modifier = Modifier) {
         ),
         shape = RoundedCornerShape(40.dp),
         border = BorderStroke(1.dp, Color(0xffE8E8E8)),
-        onClick = {},
+        onClick = {onGoogleSignInClick()},
         modifier = Modifier
             .padding(top = 20.dp, end = 15.dp, start = 15.dp)
             .height(55.dp)
@@ -432,6 +440,7 @@ fun LoginWithIOS(modifier: Modifier = Modifier) {
         }
     }
 }
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -440,6 +449,7 @@ fun Test2Preview() {
         SignInScreen(
             navController = rememberNavController(),
             authViewModel = AuthViewModel(),
+            onGoogleSignInClick = onGoogleSignInClick,
         )
     }
-}
+}*/

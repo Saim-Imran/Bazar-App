@@ -2,6 +2,7 @@ package com.example.bazarapp_1.ForgetPassword
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +53,7 @@ fun ForgetPasswordWithPhoneScreen(modifier: Modifier = Modifier, navController: 
                 contentDescription = "backward",
                 modifier = Modifier
                     .padding(start = 20.dp, top = 20.dp)
+                    .clickable { navController.popBackStack() }
             )
             ForgetPasswordPageHeader(
                 modifier = Modifier,

@@ -23,7 +23,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
 import com.example.bazarapp_1.HelpCenterPage
 import com.example.bazarapp_1.MenuPage1
@@ -48,6 +51,7 @@ import com.example.bazarapp_1.MyAccountPage
 import com.example.bazarapp_1.OfferPage
 import com.example.bazarapp_1.OrderHistoryPage
 import com.example.bazarapp_1.R
+import com.example.bazarapp_1.SignupPage
 import com.example.bazarapp_1.YourFavouritePage
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
@@ -60,7 +64,11 @@ fun ProfileScreen(navController: NavHostController,authViewModel: AuthViewModel)
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-        Profile()
+        Profile(
+            modifier = Modifier,
+            navController = navController,
+            authViewModel = AuthViewModel()
+        )
     }
 }
 
@@ -68,10 +76,11 @@ fun ProfileScreen(navController: NavHostController,authViewModel: AuthViewModel)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
+fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authViewModel: AuthViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
     var isSheetOpen by remember { mutableStateOf(false) }
+
 
     Column(modifier = Modifier.padding(top = 25.dp)) {
         // Header Text
@@ -154,7 +163,7 @@ fun Profile(modifier: Modifier = Modifier) {
         )
 // profile body
         ProfileBody(
-            navController = rememberNavController(),
+            navController = navController,
             authViewModel = AuthViewModel()
         )
 
@@ -191,13 +200,23 @@ fun Profile(modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally // Buttons stay centered
                     ) {
+                        // logout
+
+                        val authState by authViewModel.authState.observeAsState()
+                        LaunchedEffect(authState) {
+                            if (authState is AuthState.Unauthenticated) {
+                                navController.navigate(SignupPage)
+                            }
+                        }
                         // Logout Button
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF54408C)
                             ),
                             shape = RoundedCornerShape(40.dp),
-                            onClick = { isSheetOpen = false },
+                            onClick = { isSheetOpen = false;
+                                authViewModel.signout()
+                                      },
                             modifier = Modifier
                                 .padding(start = 15.dp, end = 15.dp, top = 15.dp)
                                 .height(55.dp)
@@ -415,7 +434,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                 modifier = Modifier
                     .size(30.dp)
                     .padding(start = 0.dp, top = 8.dp, end = 15.dp)
-//                    .clickable { navController.navigate(MyAccountPage) }
+//                   .clickable { navController.navigate(MyAccountPage) }
             )
         }
 
@@ -438,7 +457,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     painter = painterResource(R.drawable.fire),
                     contentDescription = "Offers and promotions",
                     modifier = Modifier
-                        .clickable { navController.navigate(MenuPage1) }
+                        .clickable { navController.navigate(OfferPage) }
                 )
             }
             Text(

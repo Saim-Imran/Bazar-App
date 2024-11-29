@@ -1,6 +1,7 @@
 package com.example.bazarapp_1.signup
 
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,7 +31,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,13 +53,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.bazarapp_1.AuthState
+import com.example.bazarapp_1.AuthViewModel
+import com.example.bazarapp_1.LoginPage
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.common.Annotated
 import com.example.bazarapp_1.common.HeaderTextSignPages1
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 
 @Composable
-fun SignUPScreen_2(modifier: Modifier = Modifier) {
+fun SignUPScreen1(navController: NavHostController, authViewModel: AuthViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,6 +77,9 @@ fun SignUPScreen_2(modifier: Modifier = Modifier) {
                 contentDescription = "backward",
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp)
+                    .clickable {
+                        navController.navigate(LoginPage)
+                    }
             )
             // sign up text at top
             HeaderTextSignPages1(
@@ -77,10 +89,16 @@ fun SignUPScreen_2(modifier: Modifier = Modifier) {
             )
 
             // main body fields like name signup and password
-            SignUpFields2()
+            SignUpFields2(
+                navController = navController,
+                authViewModel = AuthViewModel()
+            )
 
             // Register Button
-            RegisterButtonPage2()
+            RegisterButtonPage2(
+                navController = navController,
+                authViewModel = AuthViewModel()
+            )
 
             // bottom text
             Annotated(
@@ -91,7 +109,7 @@ fun SignUPScreen_2(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SignUpFields2(modifier: Modifier = Modifier) {
+fun SignUpFields2(navController: NavHostController, authViewModel: AuthViewModel) {
     var nameInput by remember { mutableStateOf("") }
     var emailInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
@@ -103,6 +121,18 @@ fun SignUpFields2(modifier: Modifier = Modifier) {
     else
         painterResource(R.drawable._3498)
 
+// launch effect
+    val authState = authViewModel.authState.observeAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState.value) {
+        when(authState.value){
+            is AuthState.Authenticated -> navController.navigate(LoginPage)
+            is AuthState.Error -> Toast.makeText(context,(authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT).show()
+            else -> Unit
+        }
+    }
 
 
 
@@ -285,7 +315,9 @@ fun PasswordValidation() {
 }
 
 @Composable
-fun RegisterButtonPage2(modifier: Modifier = Modifier) {
+fun RegisterButtonPage2(navController: NavHostController, authViewModel: AuthViewModel) {
+    var emailInput by remember { mutableStateOf("") }
+    var passwordInput by remember { mutableStateOf("") }
     Column(modifier = Modifier.padding(top = 25.dp)) {
 
         Button(
@@ -293,7 +325,7 @@ fun RegisterButtonPage2(modifier: Modifier = Modifier) {
                 containerColor = Color(0xFF54408C)
             ),
             shape = RoundedCornerShape(40.dp),
-            onClick = {},
+            onClick = { authViewModel.signup(emailInput , passwordInput  )},
             modifier = Modifier
                 .padding(horizontal = 15.dp)
                 .height(55.dp)
@@ -335,7 +367,7 @@ fun RegisterButtonPage2(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     //          .padding(top = 25.dp)
                     .clickable {
-
+navController.navigate(LoginPage)
                     }
             )
         }
@@ -347,6 +379,9 @@ fun RegisterButtonPage2(modifier: Modifier = Modifier) {
 @Composable
 fun SignUp2Preview() {
     BazarApp_1Theme {
-        SignUPScreen_2()
+        SignUPScreen1(
+            navController = rememberNavController(),
+            authViewModel =AuthViewModel()
+        )
     }
 }

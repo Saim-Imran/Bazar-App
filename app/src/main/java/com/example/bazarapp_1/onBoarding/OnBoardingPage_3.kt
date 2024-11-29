@@ -52,7 +52,7 @@ fun OnBoardingScreen3(navController: NavController) {
             modifier = Modifier
                 .padding(top = 35.dp, start = 25.dp)
                 .clickable {
-                    navController.navigate(MenuPage1)
+                    navController.navigate(LoginPage)
                 }
         )
 
@@ -134,7 +134,7 @@ navController.navigate(SignupPage)
                     .padding(top = 15.dp)
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-//                        navController.navigate(MenuPage1)
+                        navController.navigate(LoginPage)
                     }
             )
 

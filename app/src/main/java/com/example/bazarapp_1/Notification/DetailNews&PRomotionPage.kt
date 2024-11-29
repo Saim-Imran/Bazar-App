@@ -31,19 +31,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
 
 @Composable
-fun DetailNewsPromoScreen(modifier: Modifier = Modifier) {
+fun DetailNewsPromoScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
             .verticalScroll(rememberScrollState())
     ) {
-        DetailPromoTopBar()
+        DetailPromoTopBar(
+            navController = navController
+        )
         DetailPromoBox()
 DetailPromoBodyDetail()
 
@@ -51,7 +55,7 @@ DetailPromoBodyDetail()
 }
 
 @Composable
-fun DetailPromoTopBar(modifier: Modifier = Modifier) {
+fun DetailPromoTopBar(navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,7 +70,7 @@ fun DetailPromoTopBar(modifier: Modifier = Modifier) {
             contentDescription = "Back",
             modifier = Modifier
                 .padding(end = 8.dp)
-                .clickable { }
+                .clickable { navController.popBackStack()}
         )
         Text(
             text = "Notification",
@@ -204,6 +208,8 @@ Column (modifier = Modifier
 @Composable
 fun DetailPrev() {
     BazarApp_1Theme {
-        DetailNewsPromoScreen()
+        DetailNewsPromoScreen(
+            navController = rememberNavController()
+        )
     }
 }

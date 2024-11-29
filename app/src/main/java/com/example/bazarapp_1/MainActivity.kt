@@ -1,114 +1,84 @@
 package com.example.bazarapp_1
 
 import android.os.Bundle
-import android.view.Menu
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bazarapp_1.Category.MenuScreen
-import com.example.bazarapp_1.Category.MenuSearchScreen
-import com.example.bazarapp_1.ForgetPassword.ForgetPasswordScreen
-import com.example.bazarapp_1.ForgetPassword.ForgetPasswordVerificationPNScreen
-import com.example.bazarapp_1.ForgetPassword.ForgetPasswordWithEmailScreen
-import com.example.bazarapp_1.ForgetPassword.ForgetPasswordWithPhoneScreen
-import com.example.bazarapp_1.ForgetPassword.SetNewPasswordScreen
-import com.example.bazarapp_1.ForgetPassword.SuccessfullyPasswordChangedScreen
-import com.example.bazarapp_1.Notification.DetailNewsPromoScreen
-import com.example.bazarapp_1.Notification.NewsPromoScreen
-import com.example.bazarapp_1.Notification.NotificationDeliveryScreen
-import com.example.bazarapp_1.Profile.HelpCenterScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.bazarapp_1.Cart.ConfirmOrderDeliveryDateScreen
+import com.example.bazarapp_1.Cart.ConfirmOrderEmptyCartScreen
+import com.example.bazarapp_1.Cart.ConfirmOrderEmptyNotificationScreen
+import com.example.bazarapp_1.Cart.ConfirmOrderLocationScreen
+import com.example.bazarapp_1.Cart.ConfirmOrderPaymentDetailScreen
+
+import com.example.bazarapp_1.Cart.ConfirmOrderPaymentMethodScreen
+import com.example.bazarapp_1.Cart.ConfirmOrderScreen
+import com.example.bazarapp_1.Home.AuthorInnerScreen
+import com.example.bazarapp_1.Home.AuthorsScreen
+import com.example.bazarapp_1.Home.DetailMenuScreen
+import com.example.bazarapp_1.Home.HomeScreen
+import com.example.bazarapp_1.Home.HomeScreenNew
+import com.example.bazarapp_1.Home.VendorsScreen
 import com.example.bazarapp_1.Profile.MyAccountScreen
-import com.example.bazarapp_1.Profile.OfferScreen
-import com.example.bazarapp_1.Profile.OrderHistoryScreen
-import com.example.bazarapp_1.Profile.ProfileScreen
-import com.example.bazarapp_1.Profile.YourFavouriteScreen
-import com.example.bazarapp_1.SuccessOrder.SuccessOrderReceivingScreen
-import com.example.bazarapp_1.SuccessOrder.SuccessOrderWaitingScreen
-import com.example.bazarapp_1.onBoarding.OnBoardingScreen1
-import com.example.bazarapp_1.signup.BoxTest
-
-
-import com.example.bazarapp_1.signup.SignInScreen
-import com.example.bazarapp_1.signup.SignUPScreen_2
-import com.example.bazarapp_1.signup.SignUpInputPNScreen
-import com.example.bazarapp_1.signup.SignUpSuccessScreen
-import com.example.bazarapp_1.signup.SignUpVerificationEmailScreen
-import com.example.bazarapp_1.signup.SignUpVerificationPhoneNumberScreen
-
-
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
+
 
 class MainActivity : ComponentActivity() {
+    private val authViewModel: AuthViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-val authViewModel :AuthViewModel by viewModels()
+
+
+        authViewModel.initializeGoogleSignIn(this)
+
+
+        val googleSignInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+                Log.i("TAG", "firebaseAuthWithGoogle: $result")
+                val task: Task<GoogleSignInAccount> =
+                    GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                authViewModel.handleGoogleSignInResult(task)
+            }
+        }
+
         setContent {
             BazarApp_1Theme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
-                    //  SplashScreen()
-                 //   OnBoardingScreen1()
-                 //  SignInScreen()
-                   // Test1()
-                //    SignUPPage1()
-              //      SignUPScreen_2()
-                 //   SignInScreen()
-//SignUpSuccessScreen()
-                  //  SignUpVerificationEmailScreen()
-                //   PhoneNumberTextFieldTest()
-//SignUpInputPNScreen()
-                //    SignUpVerificationPhoneNumberScreen()
-       //    ForgetPasswordScreen()
-              //  SelectPasswordResetOption()
-                //    ForgetPasswordWithEmailScreen()
-//ForgetPasswordWithPhoneScreen()
-//ForgetPasswordVerificationPNScreen()
-//                    SetNewPasswordScreen()
-//                    SuccessfullyPasswordChangedScreen()
-//MenuScreen()
-//                    MenuScreen1()
-//BottomNavigation()
-//                    SearchView()
-//MenuSearchScreen()
-//SuccessOrderWaitingScreen()
-//SuccessOrderReceivingScreen()
-//SuccessBox()
-//ProfileScreen()
-//ProfileBody()
-//MyAccountScreen()
-//YourFavouriteScreen()
-//OrderHistoryScreen()
-//HelpCenterScreen()
-//OfferScreen()
-//BoxTest()
-//NotificationDeliveryScreen()
-//                    NewsPromoScreen()
-//DetailNewsPromoScreen()
-                Navigation(
-                    modifier = Modifier,
-                    authViewModel = authViewModel
-                )
+                    // Pass Navigation with Google Sign-In handler
+//ConfirmOrderScreen()
+//ConfirmOrderPaymentDetailScreen()
+//                    ConfirmOrderPaymentMethodScreen()
+//ConfirmOrderDeliveryDateScreen()
+//ConfirmOrderLocationScreen()
+//ConfirmOrderEmptyCartScreen()
+//ConfirmOrderEmptyNotificationScreen()
+/*MyAccountScreen(
+    navController = rememberNavController(),
+    authViewModel = AuthViewModel()
+)*/
+
+                     Navigation(
+                        modifier = Modifier,
+                        authViewModel = authViewModel
+                    ) { googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent()) }
                 }
             }
         }
     }
 }
-
-
-
-/*
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BazarApp_1Theme {
-        Greeting("Android")
-    }
-}*/

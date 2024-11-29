@@ -56,7 +56,7 @@ fun ForgetPasswordScreen(modifier: Modifier = Modifier, navController: NavHostCo
                 contentDescription = "backward",
                 modifier =Modifier
                     .padding(top = 20.dp, start = 20.dp)
-                    .clickable {  }
+                    .clickable { navController.popBackStack() }
             )
             ForgetPasswordPageHeader(
                 modifier = Modifier,
@@ -70,7 +70,7 @@ fun ForgetPasswordScreen(modifier: Modifier = Modifier, navController: NavHostCo
       //  ChoseOption()
         SelectPasswordResetOption(
             modifier = Modifier,
-            navController = rememberNavController()
+            navController = navController
         )
         ForgetPasswordContinue(
             navController = navController,

@@ -40,7 +40,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
+import com.example.bazarapp_1.ConfirmOrderEmptyCardPage
+import com.example.bazarapp_1.HomePage
 import com.example.bazarapp_1.LoginPage
+import com.example.bazarapp_1.MenuPage1
+import com.example.bazarapp_1.MenuSearchPage
+import com.example.bazarapp_1.ProfilePage
 
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.SignupPage
@@ -83,8 +88,9 @@ fun MenuScreen(navController: NavHostController,authViewModel: AuthViewModel) {
         BottomNavigation(
             modifier = Modifier
                 .weight(.2f)
-                .fillMaxWidth()
-//                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            navController = navController
+//                .align(Alignment.BottomCenter),
         )
     }
 }
@@ -96,13 +102,7 @@ fun TopBar(modifier: Modifier,navController: NavHostController,authViewModel: Au
     val authState by authViewModel.authState.observeAsState()
 
     // Monitor logout state
-    LaunchedEffect(authState) {
-        if (authState is AuthState.Unauthenticated) {
-            navController.navigate(SignupPage)
 
-
-        }
-    }
 
     Row(
         modifier = Modifier
@@ -116,6 +116,7 @@ fun TopBar(modifier: Modifier,navController: NavHostController,authViewModel: Au
 
             modifier = Modifier
                 .size(25.dp)
+                .clickable { navController.navigate(MenuSearchPage) }
 
         )
         Spacer(modifier = Modifier.width(100.dp))
@@ -136,7 +137,7 @@ fun TopBar(modifier: Modifier,navController: NavHostController,authViewModel: Au
             modifier = Modifier
                 .size(25.dp)
                 .clickable {
-                    authViewModel.signout()
+
                 }
         )
     }
@@ -220,7 +221,7 @@ fun CategoryBody(selectedCategory: String, modifier: Modifier) {
 
 
 @Composable
-fun BottomNavigation(modifier: Modifier = Modifier) {
+fun BottomNavigation(modifier: Modifier = Modifier,navController: NavHostController) {
 
     Row(
         modifier = Modifier
@@ -237,6 +238,7 @@ fun BottomNavigation(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.home_fill),
                 contentDescription = "Home",
                 modifier = Modifier
+                    .clickable { navController.navigate(HomePage) }
             )
             Text(
                 text = "Home",
@@ -250,6 +252,7 @@ fun BottomNavigation(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.menu_fill),
                 contentDescription = "menu",
                 modifier = Modifier
+                    .clickable { navController.navigate(MenuPage1) }
             )
             Text(
                 text = "Category",
@@ -263,6 +266,7 @@ fun BottomNavigation(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.cart_fill),
                 contentDescription = "cart",
                 modifier = Modifier
+                    .clickable { navController.navigate(ConfirmOrderEmptyCardPage) }
             )
             Text(
                 text = "Cart",
@@ -276,6 +280,7 @@ fun BottomNavigation(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.profile),
                 contentDescription = "Home",
                 modifier = Modifier
+                    .clickable { navController.navigate(ProfilePage) }
             )
             Text(
                 text = "Profile",

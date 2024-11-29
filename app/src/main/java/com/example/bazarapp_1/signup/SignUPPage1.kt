@@ -47,12 +47,13 @@ import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
 import com.example.bazarapp_1.LoginPage
 
-import com.example.bazarapp_1.MenuPage1
+
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.SignupPage
 import com.example.bazarapp_1.common.Annotated
 import com.example.bazarapp_1.common.HeaderTextSignPages1
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
+/*
 
 @Composable
 fun SignUPScreen1(navController: NavHostController,authViewModel: AuthViewModel) {
@@ -109,6 +110,7 @@ fun SignUpFields1(navController: NavHostController,authViewModel: AuthViewModel)
         painterResource(R.drawable.visibility_118485)
     else
         painterResource(R.drawable._3498)
+
 // launch effect
     val authState = authViewModel.authState.observeAsState()
 val context = LocalContext.current
@@ -314,7 +316,8 @@ navController.navigate(LoginPage)
 
 @Composable
 fun RegisterButton(authViewModel: AuthViewModel) {
-   /* Column(modifier = Modifier.padding(top = 25.dp)) {
+   */
+/* Column(modifier = Modifier.padding(top = 25.dp)) {
 
 val email by remember { mutableStateOf("") }
         val password by remember { mutableStateOf("") }
@@ -372,7 +375,8 @@ val email by remember { mutableStateOf("") }
                     }
             )
         }
-    }*/
+    }*//*
+
 }
 
 
@@ -385,4 +389,4 @@ fun SignUpPreview() {
             authViewModel = AuthViewModel(),
         )
     }
-}
+}*/

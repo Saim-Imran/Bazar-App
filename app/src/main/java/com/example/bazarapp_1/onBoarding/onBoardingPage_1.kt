@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.bazarapp_1.LoginPage
 import com.example.bazarapp_1.OnBoardingPage2
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.common.OnBoardButton
@@ -46,7 +47,7 @@ fun OnBoardingScreen1(navController: NavHostController) {
             fontFamily = robotofontfamily,
             modifier = Modifier
                 .padding(top = 35.dp, start = 25.dp)
-                .clickable {  }
+                .clickable { navController.navigate(LoginPage) }
         )
 
         MainBodyScreen1(

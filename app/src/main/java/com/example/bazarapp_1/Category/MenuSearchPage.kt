@@ -2,6 +2,7 @@ package com.example.bazarapp_1.Category
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,17 +30,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
 
 @Composable
-fun MenuSearchScreen(modifier: Modifier = Modifier) {
+fun MenuSearchScreen(modifier: Modifier = Modifier,navController: NavHostController) {
     Column (modifier = Modifier
         .fillMaxSize()
         .background(color = Color.White)
     ){
-TopBarMenuSearch()
+TopBarMenuSearch(
+    modifier = Modifier,
+    navController = navController
+)
         SearchTextField()
         RecentText()
     }
@@ -47,7 +53,7 @@ TopBarMenuSearch()
 
 
 @Composable
-fun TopBarMenuSearch(modifier: Modifier = Modifier) {
+fun TopBarMenuSearch(modifier: Modifier = Modifier,navController: NavHostController) {
 
         Row (modifier = Modifier.padding(top = 30.dp)
             ){
@@ -56,6 +62,7 @@ fun TopBarMenuSearch(modifier: Modifier = Modifier) {
             contentDescription = "Back",
             modifier = Modifier
                 .padding(start = 20.dp)
+                .clickable { navController.popBackStack() }
         )
             Text(
                 text = "Search",
@@ -127,6 +134,9 @@ fun RecentText(modifier: Modifier = Modifier) {
 @Composable
  fun MenuSearchPrew() {
     BazarApp_1Theme {
-        MenuSearchScreen()
+        MenuSearchScreen(
+            modifier = Modifier,
+            navController = rememberNavController()
+        )
     }
 }

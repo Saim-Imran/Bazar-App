@@ -24,26 +24,36 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.bazarapp_1.DetailNewsPage
+import com.example.bazarapp_1.NewsPromoPage
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
 
 @Composable
-fun NotificationDeliveryScreen(modifier: Modifier = Modifier) {
+fun NotificationDeliveryScreen(modifier: Modifier = Modifier,navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
         //   .padding(start = 20.dp, end = 20.dp)
     ) {
-        NotificationTopBar()
-        NotificationBox()
+        NotificationTopBar(
+            modifier = Modifier,
+            navController = navController
+        )
+        NotificationBox(
+            modifier = Modifier,
+            navController = navController
+        )
         NotificationBodyItems()
     }
 }
 
 @Composable
-fun NotificationTopBar(modifier: Modifier = Modifier) {
+fun NotificationTopBar(modifier: Modifier = Modifier,navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +68,7 @@ fun NotificationTopBar(modifier: Modifier = Modifier) {
             contentDescription = "Back",
             modifier = Modifier
                 .padding(end = 8.dp)
-                .clickable { }
+                .clickable {navController.popBackStack() }
         )
         Text(
             text = "Notification",
@@ -70,12 +80,13 @@ fun NotificationTopBar(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 10.dp)
+                .clickable { navController.navigate(NewsPromoPage) }
         )
     }
 }
 
 @Composable
-fun NotificationBox(modifier: Modifier = Modifier) {
+fun NotificationBox(modifier: Modifier = Modifier,navController: NavHostController) {
     Column(modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp)) {
     Text(
         text = "Current",
@@ -85,6 +96,7 @@ fun NotificationBox(modifier: Modifier = Modifier) {
         fontFamily = robotofontfamily,
         modifier = Modifier
             .padding(bottom = 15.dp)
+            .clickable { navController.navigate(DetailNewsPage) }
     )
 //Box
     Box(
@@ -355,6 +367,9 @@ fun NotificationBodyItems(modifier: Modifier = Modifier) {
 @Composable
 fun NotificationPreview() {
     BazarApp_1Theme {
-        NotificationDeliveryScreen()
+        NotificationDeliveryScreen(
+            modifier = Modifier,
+            navController = rememberNavController()
+        )
     }
 }
