@@ -1,5 +1,7 @@
 package com.example.bazarapp_1.Profile
 
+import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,17 +37,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.bazarapp_1.AuthState
 import com.example.bazarapp_1.AuthViewModel
 import com.example.bazarapp_1.HelpCenterPage
+import com.example.bazarapp_1.LoginPage
 import com.example.bazarapp_1.MenuPage1
 import com.example.bazarapp_1.MyAccountPage
 import com.example.bazarapp_1.OfferPage
@@ -59,6 +67,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavHostController,authViewModel: AuthViewModel) {
+    Log.e("Profile page", "Profile page successfully open ")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,26 +76,31 @@ fun ProfileScreen(navController: NavHostController,authViewModel: AuthViewModel)
         Profile(
             modifier = Modifier,
             navController = navController,
-            authViewModel = AuthViewModel()
+            authViewModel = authViewModel
         )
     }
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authViewModel: AuthViewModel) {
+fun Profile(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutineScope = rememberCoroutineScope()
     var isSheetOpen by remember { mutableStateOf(false) }
 
     val authState by authViewModel.authState.observeAsState()
+    val userProfile by authViewModel.userProfile.observeAsState()
+
     LaunchedEffect(authState) {
         if (authState is AuthState.Unauthenticated) {
-            navController.navigate(SignupPage)
+            navController.navigate(LoginPage)
         }
     }
+
     Column(modifier = Modifier.padding(top = 25.dp)) {
         // Header Text
         Text(
@@ -96,8 +110,7 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
             fontFamily = robotofontfamily,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
-            modifier = Modifier
-                .padding(start = 150.dp)
+            modifier = Modifier.padding(start = 150.dp)
         )
 
         // Divider before the Row
@@ -115,26 +128,24 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 20.dp, end = 20.dp)
         ) {
-            Image(
-                painter = painterResource(R.drawable.profileimg),
-                contentDescription = "img",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(50.dp)
+            // Dynamic User Image or First Letter
+            ProfileImage(
+                userImageUrl = userProfile?.profileImageUrl,
+                userName = userProfile?.name ?: "Guest"
             )
 
             Column(
-                modifier = Modifier
-                    .padding(start = 20.dp)
+                modifier = Modifier.padding(start = 20.dp)
             ) {
                 Text(
-                    text = "John Doe",
+                    text = userProfile?.name ?: "User Name",
                     color = Color(0xff121212),
                     fontSize = 16.sp,
                     fontFamily = robotofontfamily,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    text = "(+1) 234 567 890",
+                    text = userProfile?.email ?: "user@example.com",
                     color = Color(0xffA6A6A6),
                     fontSize = 14.sp,
                     fontFamily = robotofontfamily,
@@ -154,6 +165,7 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                     .padding(top = 15.dp)
                     .clickable {
                         coroutineScope.launch { isSheetOpen = true }
+                        Log.e("Profile page", "Open bottom sheet for signout")
                     }
             )
         }
@@ -166,10 +178,11 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         )
-// profile body
+
+        // Profile body
         ProfileBody(
             navController = navController,
-            authViewModel = AuthViewModel()
+            authViewModel = authViewModel
         )
 
         // Bottom Sheet
@@ -185,7 +198,7 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                         .background(color = Color.White)
                         .fillMaxWidth()
                         .padding(16.dp),
-                    horizontalAlignment = Alignment.Start // Aligning text to start
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         text = "Logout?",
@@ -195,28 +208,32 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "Lorem Ipsum is simply dummy text of the\nprinting and typesetting industry.",
+                        text = "Are you sure you want to logout?",
                         fontSize = 14.sp,
                         color = Color.Gray,
-                        textAlign = TextAlign.Center, // Ensure multiline text also aligns to start
+                        textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally // Buttons stay centered
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // logout
-
-
                         // Logout Button
                         Button(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF54408C)
                             ),
                             shape = RoundedCornerShape(40.dp),
-                            onClick = { isSheetOpen = false;
-                                authViewModel.signout()
-                                      },
+                            onClick = {
+                                isSheetOpen = false
+                                authViewModel.signout(
+                                    activity = Activity(),
+                                    navController = NavController(
+                                        context = Activity()
+                                    )
+                                )
+                                Log.e("Profile Page", "logout from the account ")
+                            },
                             modifier = Modifier
                                 .padding(start = 15.dp, end = 15.dp, top = 15.dp)
                                 .height(55.dp)
@@ -255,99 +272,54 @@ fun Profile(modifier: Modifier = Modifier,navController: NavHostController,authV
                 }
             }
         }
-
     }
 }
-/*
 
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.padding(top = 25.dp)) {
-
-        Text(
-            text = "Profile",
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp,
-            fontFamily = robotofontfamily,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
+fun ProfileImage(userImageUrl: String?, userName: String) {
+    if (userImageUrl.isNullOrEmpty()) {
+        // Display the first letter of the user's name
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .padding(start = 150.dp)
-        )
-        // Divider before the Row
-        HorizontalDivider(
-            color = Color.LightGray,
-            thickness = 1.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp)
-        )
-
-        // The Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, start = 20.dp, end = 20.dp)
+                .size(50.dp)
+                .clip(CircleShape)
+                .background(Color.Gray)
         ) {
-
-            Image(
-                painter = painterResource(R.drawable.profileimg),
-                contentDescription = "img",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(top = 0.dp)
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(start = 20.dp)
-            ) {
-                Text(
-                    text = "John Doe",
-                    color = Color(0xff121212),
-                    fontSize = 16.sp,
-                    fontFamily = robotofontfamily,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                )
-                Text(
-                    text = "(+1) 234 567 890",
-                    color = Color(0xffA6A6A6),
-                    fontSize = 14.sp,
-                    fontFamily = robotofontfamily,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-            Spacer(modifier = Modifier.width(80.dp))
             Text(
-                text = "Logout",
-                color = Color.Red,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = robotofontfamily,
-                modifier = Modifier
-                    .padding(start = 0.dp, top = 15.dp)
+                text = userName.firstOrNull()?.toString() ?: "?",
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
         }
-
-
-        HorizontalDivider(
-            color = Color.LightGray,
-            thickness = 1.dp,
+    } else {
+        // Display the user's profile image
+        Image(
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current)
+                    .data(userImageUrl)
+                    .apply {
+                        crossfade(true)
+                        placeholder(R.drawable.profileimg)
+                        error(R.drawable.profileimg)
+                    }
+                    .build()
+            ),
+            contentDescription = "User Profile Image",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
+                .size(50.dp)
+                .clip(CircleShape)
         )
-
-        ProfileBody()
     }
 }
-*/
+
+
 
 @Composable
 fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) {
-//    var navController:NavHostController
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(color = Color.White)
@@ -386,7 +358,8 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                 contentDescription = "frwd",
                 modifier = Modifier
                     .clickable {
-                        navController.navigate(MyAccountPage
+                        navController.navigate(
+                            MyAccountPage
                         )
                     }
                     .size(30.dp)
@@ -427,7 +400,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     .padding(top = 8.dp, start = 30.dp)
                     .weight(.9f)
             )
-//        Spacer(modifier = Modifier.width(180.dp))
+
             Image(
                 painter = painterResource(R.drawable.frwd),
                 contentDescription = "frwd",
@@ -470,7 +443,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     .padding(top = 8.dp, start = 30.dp)
                     .weight(.9f)
             )
-//        Spacer(modifier = Modifier.width(90.dp))
+
             Image(
                 painter = painterResource(R.drawable.frwd),
                 contentDescription = "frwd",
@@ -511,7 +484,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     .padding(top = 8.dp, start = 30.dp)
                     .weight(.9f)
             )
-//        Spacer(modifier = Modifier.width(170.dp))
+
             Image(
                 painter = painterResource(R.drawable.frwd),
                 contentDescription = "frwd",
@@ -552,7 +525,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     .padding(top = 8.dp, start = 30.dp)
                     .weight(.9f)
             )
-//        Spacer(modifier = Modifier.width(140.dp))
+
             Image(
                 painter = painterResource(R.drawable.frwd),
                 contentDescription = "frwd",
@@ -593,7 +566,7 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
                     .padding(top = 8.dp, start = 30.dp)
                     .weight(.9f)
             )
-            // Spacer(modifier = Modifier.width(150.dp))
+
             Image(
                 painter = painterResource(R.drawable.frwd),
                 contentDescription = "frwd",
@@ -604,16 +577,5 @@ fun ProfileBody(  navController:NavHostController,authViewModel: AuthViewModel) 
             )
         }
 
-    }
-}
-
-@Preview
-@Composable
-fun ProfilePreview() {
-    BazarApp_1Theme {
-        ProfileScreen(
-            navController = rememberNavController(),
-            authViewModel = AuthViewModel()
-        )
     }
 }

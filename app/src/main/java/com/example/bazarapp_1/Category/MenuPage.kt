@@ -245,6 +245,7 @@ fun BottomNavigation(modifier: Modifier = Modifier,navController: NavHostControl
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xffA6A6A6),
+                modifier = Modifier.clickable { navController.navigate(HomePage) }
             )
         }
         Column {
@@ -259,6 +260,7 @@ fun BottomNavigation(modifier: Modifier = Modifier,navController: NavHostControl
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xffA6A6A6),
+                modifier = Modifier.clickable { navController.navigate(MenuPage1) }
             )
         }
         Column {
@@ -273,6 +275,8 @@ fun BottomNavigation(modifier: Modifier = Modifier,navController: NavHostControl
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xffA6A6A6),
+                modifier = Modifier
+                    .clickable { navController.navigate(ConfirmOrderEmptyCardPage) }
             )
         }
         Column {
@@ -287,6 +291,8 @@ fun BottomNavigation(modifier: Modifier = Modifier,navController: NavHostControl
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xffA6A6A6),
+                modifier = Modifier
+                    .clickable { navController.navigate(ProfilePage) }
             )
         }
     }

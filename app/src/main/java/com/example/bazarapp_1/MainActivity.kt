@@ -10,22 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import com.example.bazarapp_1.Cart.ConfirmOrderDeliveryDateScreen
-import com.example.bazarapp_1.Cart.ConfirmOrderEmptyCartScreen
-import com.example.bazarapp_1.Cart.ConfirmOrderEmptyNotificationScreen
-import com.example.bazarapp_1.Cart.ConfirmOrderLocationScreen
-import com.example.bazarapp_1.Cart.ConfirmOrderPaymentDetailScreen
-
-import com.example.bazarapp_1.Cart.ConfirmOrderPaymentMethodScreen
-import com.example.bazarapp_1.Cart.ConfirmOrderScreen
-import com.example.bazarapp_1.Home.AuthorInnerScreen
-import com.example.bazarapp_1.Home.AuthorsScreen
-import com.example.bazarapp_1.Home.DetailMenuScreen
-import com.example.bazarapp_1.Home.HomeScreen
-import com.example.bazarapp_1.Home.HomeScreenNew
-import com.example.bazarapp_1.Home.VendorsScreen
-import com.example.bazarapp_1.Profile.MyAccountScreen
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -60,20 +44,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
-                    // Pass Navigation with Google Sign-In handler
-//ConfirmOrderScreen()
-//ConfirmOrderPaymentDetailScreen()
-//                    ConfirmOrderPaymentMethodScreen()
-//ConfirmOrderDeliveryDateScreen()
-//ConfirmOrderLocationScreen()
-//ConfirmOrderEmptyCartScreen()
-//ConfirmOrderEmptyNotificationScreen()
-/*MyAccountScreen(
-    navController = rememberNavController(),
-    authViewModel = AuthViewModel()
-)*/
 
-                     Navigation(
+
+                    Navigation(
                         modifier = Modifier,
                         authViewModel = authViewModel
                     ) { googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent()) }

@@ -53,6 +53,7 @@ import com.example.bazarapp_1.HomePage
 import com.example.bazarapp_1.MenuPage1
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.SignUpSuccessPage
+import com.example.bazarapp_1.SignupPage
 import com.example.bazarapp_1.common.HeaderTextSignPages1
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
 import com.example.bazarapp_1.ui.theme.robotofontfamily
@@ -62,6 +63,7 @@ fun SignInScreen(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     onGoogleSignInClick: () -> Unit,) {
+
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -74,7 +76,9 @@ fun SignInScreen(
                 contentDescription = "Zoom",
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp)
-                    .clickable { navController.popBackStack() }
+                    .clickable {
+                    //    navController.popBackStack()
+                    }
             )
 
             //text welcome
@@ -91,10 +95,7 @@ fun SignInScreen(
                 authViewModel = authViewModel,
             )
             //Login Button
-            LoginButtonPage1(
-                authViewModel = authViewModel,
-                navController = navController,
-            )
+
             // Also Login With
             OtherLoginWays(
                 modifier = Modifier,
@@ -105,8 +106,7 @@ fun SignInScreen(
                 modifier = Modifier,
                 onGoogleSignInClick = onGoogleSignInClick
             )
-            // for ios login
-            LoginWithIOS()
+
         }
 
     }
@@ -228,6 +228,7 @@ fun LogInFields(
         onClick = {
 //            navController.navigate(SplashScreen1)
             authViewModel.login(emailInput, passwordInput)
+            Log.e("SignIn page","Loading to signup to an account")
         },
         modifier = Modifier
             .padding(start = 15.dp, end = 15.dp, top = 25.dp)
@@ -250,7 +251,7 @@ fun LogInFields(
             .padding(top = 20.dp)
     ) {
         Text(
-            text = "Don't have an account",
+            text = "       Don't have an account",
             color = Color(0xffA6A6A6),
             fontSize = 16.sp
         )
@@ -259,72 +260,12 @@ fun LogInFields(
             color = Color(0xff54408C),
             fontSize = 20.sp,
             modifier = Modifier.clickable {
-               // navController.navigate(HomePage)
+                 navController.navigate(SignupPage)
             }
         )
     }
 }
 
-@Composable
-fun LoginButtonPage1(authViewModel: AuthViewModel, navController: NavController) {
-    /* Column(modifier = Modifier.padding(top = 25.dp)) {
-
-         Button(
-             colors = ButtonDefaults.buttonColors(
-                 containerColor = Color(0xFF54408C)
-             ),
-             shape = RoundedCornerShape(40.dp),
-             onClick = {
-               //  authViewModel.login(email, password  )
-
-             },
-             modifier = Modifier
-                 .padding(horizontal = 15.dp)
-                 .height(55.dp)
-
-         ) {
-             Text(
-                 text = "Login",
-                 color = Color.White,
-                 fontSize = 16.sp,
-                 fontWeight = FontWeight.SemiBold,
-                 modifier = Modifier
-                     .fillMaxWidth(),
-                 //   .padding(start = 60.dp),
-                 textAlign = TextAlign.Center
-
-             )
-         }
-         Row(
-             modifier = Modifier
-                 .align(Alignment.CenterHorizontally)
-                 .padding(top = 20.dp)
-         ) {
-
-             Text(
-                 text = "Don't have an account",
-                 color = Color(0xffA6A6A6),
-                 fontSize = 16.sp,
-                 fontWeight = FontWeight.Normal,
-                 modifier = Modifier
-                 //.padding(start = 15.dp, top = 25.dp)
-             )
-
-             // Second Text (in a different color)
-             Text(
-                 text = "Sign Up",
-                 color = Color(0xff54408C),
-                 fontSize = 20.sp,
-                 fontWeight = FontWeight.Normal,
-                 modifier = Modifier
-                     //          .padding(top = 25.dp)
-                     .clickable {
- navController.navigate(SignupPage)
-                     }
-             )
-         }
-     }*/
-}
 
 @Composable
 fun OtherLoginWays(modifier: Modifier = Modifier,navController: NavHostController,) {
@@ -347,7 +288,7 @@ fun OtherLoginWays(modifier: Modifier = Modifier,navController: NavHostControlle
             fontFamily = robotofontfamily,
             modifier = Modifier
                 .padding(start = 5.dp, end = 5.dp)
-            //new nav
+                //new nav
                 .clickable {
                     navController.navigate(SignUpSuccessPage)
                 }
@@ -371,7 +312,8 @@ fun LoginWithGoogle(modifier: Modifier = Modifier,onGoogleSignInClick: () -> Uni
         ),
         shape = RoundedCornerShape(40.dp),
         border = BorderStroke(1.dp, Color(0xffE8E8E8)),
-        onClick = {onGoogleSignInClick()},
+        onClick = {onGoogleSignInClick()
+            Log.e("SignIn page","Sign in with google account ")},
         modifier = Modifier
             .padding(top = 20.dp, end = 15.dp, start = 15.dp)
             .height(55.dp)
@@ -399,57 +341,3 @@ fun LoginWithGoogle(modifier: Modifier = Modifier,onGoogleSignInClick: () -> Uni
         }
     }
 }
-
-@Composable
-fun LoginWithIOS(modifier: Modifier = Modifier) {
-    OutlinedButton(
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            /*(0xFFE8E8E8)*/
-
-        ),
-        shape = RoundedCornerShape(40.dp),
-        border = BorderStroke(1.dp, Color(0xffE8E8E8)),
-        onClick = {
-
-        },
-        modifier = Modifier
-            .padding(top = 20.dp, end = 15.dp, start = 15.dp)
-            .height(55.dp)
-
-    ) {
-        Row(modifier = Modifier.align(Alignment.CenterVertically)) {
-
-            Image(
-                painter = painterResource(R.drawable.apple),
-                contentDescription = "Google",
-                modifier = Modifier
-                    .padding(start = 40.dp)
-            )
-            Text(
-                text = "Sign in with Apple",
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 30.dp),
-                // textAlign = TextAlign.Center
-
-            )
-        }
-    }
-}
-/*
-
-@Preview(showBackground = true)
-@Composable
-fun Test2Preview() {
-    BazarApp_1Theme {
-        SignInScreen(
-            navController = rememberNavController(),
-            authViewModel = AuthViewModel(),
-            onGoogleSignInClick = onGoogleSignInClick,
-        )
-    }
-}*/

@@ -33,10 +33,11 @@ import com.example.bazarapp_1.Profile.OfferScreen
 import com.example.bazarapp_1.Profile.OrderHistoryScreen
 import com.example.bazarapp_1.Profile.ProfileScreen
 import com.example.bazarapp_1.Profile.YourFavouriteScreen
+import com.example.bazarapp_1.onBoarding.IntroScreen
 import com.example.bazarapp_1.onBoarding.OnBoardingScreen1
 import com.example.bazarapp_1.onBoarding.OnBoardingScreen2
 import com.example.bazarapp_1.onBoarding.OnBoardingScreen3
-import com.example.bazarapp_1.onBoarding.PagerScreen
+
 import com.example.bazarapp_1.onBoarding.SplashScreen
 import com.example.bazarapp_1.signup.SignInScreen
 import com.example.bazarapp_1.signup.SignUPScreen1
@@ -53,12 +54,13 @@ fun Navigation(
 
     NavHost(
         navController = navController,
-        startDestination = PagerScreen
+        startDestination = SplashScreen1
     ) {
         composable<SplashScreen1> {
-            SplashScreen(navController)
+            SplashScreen(navController = navController,
+                authViewModel = authViewModel)
         }
-        composable<PagerScreen> {
+        /*composable<PagerScreen> {
             PagerScreen(navController = navController)
         }
         composable<OnBoardingPage1> {
@@ -66,7 +68,7 @@ fun Navigation(
         }
         composable<OnBoardingPage2> {
             OnBoardingScreen2(navController)
-        }
+        }*/
         composable<OnBoardingPage3> {
             OnBoardingScreen3(navController)
         }
@@ -75,7 +77,7 @@ fun Navigation(
             SignInScreen(
                 navController = navController,
                 authViewModel = authViewModel,
-                onGoogleSignInClick = onGoogleSignInClick // Pass the click handler here
+                onGoogleSignInClick = onGoogleSignInClick
             )
         }
         composable<SignupPage> {
@@ -117,7 +119,8 @@ fun Navigation(
         composable<ProfilePage> {
             ProfileScreen(
                 authViewModel = authViewModel,
-                navController = navController
+                navController = navController,
+               // onGoogleSignInClick = onGoogleSignInClick
             )
         }
         composable<YourFavouritePage> {
@@ -271,6 +274,12 @@ fun Navigation(
                 navController = navController
             )
         }
+
+        composable<IntroPage> {
+            IntroScreen(
+                navController = navController
+            )
+        }
     }
 }
 
@@ -383,3 +392,5 @@ object ConfirmOrderEmptyCardPage
 @Serializable
 object ConfirmOrderEmptyNotificationPage
 
+@Serializable
+object IntroPage

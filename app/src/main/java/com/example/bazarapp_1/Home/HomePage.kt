@@ -1,5 +1,7 @@
 package com.example.bazarapp_1.Home
 
+import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,22 +18,35 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.bazarapp_1.AuthorPage
@@ -44,9 +59,24 @@ import com.example.bazarapp_1.ProfilePage
 import com.example.bazarapp_1.R
 import com.example.bazarapp_1.VenderPage
 import com.example.bazarapp_1.ui.theme.BazarApp_1Theme
+import kotlinx.coroutines.launch
+import androidx.activity.compose.BackHandler
+import androidx.compose.ui.text.font.FontStyle
+import com.example.bazarapp_1.ConfirmOrderEmptyCardPage
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenNew(modifier: Modifier = Modifier, navController: NavHostController) {
+    val context = LocalContext.current
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+    var isSheetOpen by remember { mutableStateOf(false) }
+
+    // Handle back button press
+    BackHandler {
+        isSheetOpen = true
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         // Top section (HomeScreen)
         Column(
@@ -99,15 +129,97 @@ fun HomeScreenNew(modifier: Modifier = Modifier, navController: NavHostControlle
             )
         }
     }
+
+    // Bottom Sheet
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = { isSheetOpen = false },
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(color = Color.White)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    text = "Are you sure you want \nto exit from the app",
+                    fontSize = 18.sp,
+                    color = Color(0xFF54408C),
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally // Buttons stay centered
+                ) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF54408C)
+                        ),
+                        shape = RoundedCornerShape(40.dp),
+                        onClick = {
+                            isSheetOpen = false
+                            (context as? Activity)?.finish()
+                        },
+                        modifier = Modifier
+                            .padding(start = 15.dp, end = 15.dp, top = 15.dp)
+                            .height(55.dp)
+                    ) {
+                        Text(
+                            text = "Exit",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // Cancel Button
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF9F6EE)
+                        ),
+                        shape = RoundedCornerShape(40.dp),
+                        onClick = { isSheetOpen = false },
+                        modifier = Modifier
+                            .padding(start = 15.dp, end = 15.dp, top = 15.dp, bottom = 15.dp)
+                            .height(55.dp)
+                    ) {
+                        Text(
+                            text = "No",
+                            color = Color(0xFF54408C),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController
-) {
+    navController: NavHostController,
 
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val coroutineScope = rememberCoroutineScope()
+    var isSheetOpen by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,9 +235,14 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.search),
+                painter = painterResource(id = R.drawable.arrow_left_outline),
                 contentDescription = "searchIcon",
-                tint = Color.Black
+                tint = Color.Black,
+                modifier = Modifier
+                    .clickable {
+                        coroutineScope.launch { isSheetOpen = true }
+
+                    }
             )
             Text(
                 text = "Home",
@@ -148,8 +265,82 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(top = 20.dp)
             .verticalScroll(rememberScrollState())
-    ) {
+    ) {}
+    // Bottom Sheet
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = { isSheetOpen = false },
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(color = Color.White)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
+                Text(
+                    text = "Are you sure you want to \n exit from the app.",
+                    fontSize = 18.sp,
+                    color = Color(0xFF54408C),
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally // Buttons stay centered
+                ) {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF54408C)
+                        ),
+                        shape = RoundedCornerShape(40.dp),
+                        onClick = {
+                            isSheetOpen = false
+
+                            (context as? Activity)?.finish()
+                        },
+                        modifier = Modifier
+                            .padding(start = 15.dp, end = 15.dp, top = 15.dp)
+                            .height(55.dp)
+                    ) {
+                        Text(
+                            text = "Exit",
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    // Cancel Button
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFF9F6EE)
+                        ),
+                        shape = RoundedCornerShape(40.dp),
+                        onClick = { isSheetOpen = false },
+                        modifier = Modifier
+                            .padding(start = 15.dp, end = 15.dp, top = 15.dp, bottom = 15.dp)
+                            .height(55.dp)
+                    ) {
+                        Text(
+                            text = "No",
+                            color = Color(0xFF54408C),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -526,7 +717,7 @@ fun BottomNavigationScreen(modifier: Modifier = Modifier, navController: NavHost
             Image(
                 painter = painterResource(R.drawable.cart_fill),
                 contentDescription = "cart",
-                modifier = Modifier.clickable { }
+                modifier = Modifier.clickable {navController.navigate(ConfirmOrderEmptyCardPage) }
 
             )
             Text(
@@ -534,14 +725,16 @@ fun BottomNavigationScreen(modifier: Modifier = Modifier, navController: NavHost
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 color = Color(0xffA6A6A6),
-                modifier = Modifier.clickable { navController.navigate(ConfirmOrderPage) }
+                modifier = Modifier.clickable { navController.navigate(ConfirmOrderEmptyCardPage) }
             )
         }
         Column {
             Image(
                 painter = painterResource(R.drawable.profile),
                 contentDescription = "Home",
-                modifier = Modifier.clickable { navController.navigate(ProfilePage) }
+                modifier = Modifier.clickable { navController.navigate(ProfilePage)
+
+                }
             )
             Text(
                 text = "Profile",
@@ -558,7 +751,7 @@ fun BottomNavigationScreen(modifier: Modifier = Modifier, navController: NavHost
 @Composable
 fun HomePrev() {
     BazarApp_1Theme {
-        HomeScreen(
+        HomeScreenNew(
             modifier = Modifier,
             navController = rememberNavController()
         )

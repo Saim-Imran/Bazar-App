@@ -39,16 +39,45 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.bazarapp_1.R
 
-
 @Composable
-fun VendorsScreen(modifier: Modifier = Modifier,navController: NavHostController) {
+fun VendorsScreen(modifier: Modifier = Modifier, navController: NavHostController) {
+    var selectedCategory by remember { mutableStateOf("All") }
+
+    val vendors = listOf(
+        "All" to listOf(
+            Pair(R.drawable.watttpad, "Wattpad"),
+            Pair(R.drawable.kuromi, "Kuromi"),
+            Pair(R.drawable.crane, "Crane & Co"),
+            Pair(R.drawable.gooday, "GooDay"),
+            Pair(R.drawable.warehouse, "Warehouse"),
+            Pair(R.drawable.peppa_pig, "Peppa Pig"),
+            Pair(R.drawable.jstor, "Jstor"),
+            Pair(R.drawable.peleton, "Peloton"),
+            Pair(R.drawable.haymarket, "Haymarket")
+        ),
+        "Books" to listOf(
+            Pair(R.drawable.watttpad, "Wattpad"),
+            Pair(R.drawable.jstor, "Jstor")
+        ),
+        "Poems" to listOf(
+            Pair(R.drawable.crane, "Crane & Co"),
+            Pair(R.drawable.haymarket, "Haymarket")
+        ),
+        "Special for you" to listOf(
+            Pair(R.drawable.gooday, "GooDay"),
+            Pair(R.drawable.peppa_pig, "Peppa Pig")
+        ),
+        "Stationary" to listOf(
+            Pair(R.drawable.kuromi, "Kuromi"),
+            Pair(R.drawable.warehouse, "Warehouse")
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(color = Color.White)
-//         .padding(top = 20.dp)
-        //.background(color = Color(0xFFF3F3F3))
     ) {
         Row(
             modifier = Modifier
@@ -58,7 +87,7 @@ fun VendorsScreen(modifier: Modifier = Modifier,navController: NavHostController
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.arrow_left_outline),
-                contentDescription = "searchIcon",
+                contentDescription = "Back",
                 tint = Color.Black,
                 modifier = Modifier.clickable { navController.popBackStack() }
             )
@@ -69,15 +98,19 @@ fun VendorsScreen(modifier: Modifier = Modifier,navController: NavHostController
             )
             Icon(
                 painter = painterResource(id = R.drawable.search),
-                contentDescription = "notification",
+                contentDescription = "Search",
                 tint = Color.Black
             )
         }
         Title(title = "Our Vendors", mainTitle = "Vendors")
-        HorizontalSlider()
+        HorizontalSlider(
+            items = vendors.map { it.first },
+            selectedCategory = selectedCategory,
+            onCategorySelected = { selectedCategory = it }
+        )
+        AllVendors(vendors = vendors.firstOrNull { it.first == selectedCategory }?.second ?: emptyList())
     }
 }
-
 @Composable
 fun Title(modifier: Modifier = Modifier,title:String,mainTitle:String) {
     Column(modifier = Modifier.padding(start = 20.dp)) {
@@ -98,10 +131,11 @@ fun Title(modifier: Modifier = Modifier,title:String,mainTitle:String) {
     }
 }
 @Composable
-fun HorizontalSlider(modifier: Modifier = Modifier) {
-    val items = listOf("All", "Books", "Poems", "Special for you", "Stationary")
-    var selectedItem by remember { mutableStateOf("All") }
-
+fun HorizontalSlider(
+    items: List<String>,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit
+) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,31 +147,18 @@ fun HorizontalSlider(modifier: Modifier = Modifier) {
                 text = item,
                 style = TextStyle(
                     fontSize = 16.sp,
-                    color = if (item == selectedItem) Color.Black else Color(0xffA6A6A6)
+                    color = if (item == selectedCategory) Color.Black else Color(0xffA6A6A6)
                 ),
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .clickable { selectedItem = item }
+                    .clickable { onCategorySelected(item) }
             )
         }
     }
-    AllVendors()
 }
 
 @Composable
-fun AllVendors(modifier: Modifier = Modifier) {
-    val vendors = listOf(
-        Pair(R.drawable.watttpad, "Wattpad"),
-        Pair(R.drawable.kuromi, "Kuromi"),
-        Pair(R.drawable.crane, "Crane & Co"),
-        Pair(R.drawable.gooday, "GooDay"),
-        Pair(R.drawable.warehouse, "Warehouse"),
-        Pair(R.drawable.peppa_pig, "Peppa Pig"),
-        Pair(R.drawable.jstor, "Jstor"),
-        Pair(R.drawable.peleton, "Peloton"),
-        Pair(R.drawable.haymarket, "Haymarket")
-    )
-
+fun AllVendors(vendors: List<Pair<Int, String>>, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,7 +181,7 @@ fun AllVendors(modifier: Modifier = Modifier) {
                         Image(
                             painter = painterResource(id = imageRes),
                             contentDescription = null,
-                            modifier = Modifier.size(100.dp) // Adjust size as needed
+                            modifier = Modifier.size(100.dp)
                         )
                         Text(
                             text = name,
@@ -178,6 +199,7 @@ fun AllVendors(modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 
 @Composable
